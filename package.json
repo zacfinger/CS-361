@@ -1,0 +1,25 @@
+{
+  "name": "cs-361",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacfinger/CS-361.git"
+  },
+  "author": "zacfinger.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zacfinger/CS-361/issues"
+  },
+  "homepage": "https://github.com/zacfinger/CS-361#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.0",
+    "mysql": "^2.18.1",
+    "util": "^0.12.4"
+  }
+}
