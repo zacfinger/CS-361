@@ -11,10 +11,12 @@ app.set('view engine', 'ejs');
 // use res.render to load up an ejs view file
 
 // index page
-app.get('/', function(req, res) {
-  res.render('pages/index', {
-      title: "French Republican Calendar"
-  });
+app.get('/', async (req, res) => {
+    var rows = await mysql.conn.query("select * from events limit 10;");
+    console.log(rows);
+    res.render('pages/index', {
+        events : rows
+    });
 });
 
 // about page

@@ -14,8 +14,14 @@
     <h1>This is great</h1>
     <p>Welcome to templating using EJS</p>
 
-    <h2>Variable</h2>
-    <p><%= title %></p>
+    <ul>
+      <% events.forEach(function(event) { %>
+        <li>
+          <strong><%= event.title %></strong>
+          <%= event.start_republic_hour %>.<%= event.start_republic_minute %>
+        </li>
+      <% }); %>
+    </ul>
   </div>
 </main>
 
