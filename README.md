@@ -12,3 +12,4 @@ CREATE TABLE events (id int NOT NULL AUTO_INCREMENT, title varchar(63), owning_u
 * https://medium.com/@eligijuskrepsta/setting-up-node-mysql-and-nginx-on-digital-ocean-247546be20df
 * https://codeforgeek.com/nodejs-mysql-tutorial/
 * https://codeshack.io/basic-login-system-nodejs-express-mysql/
+* https://www.digitalocean.com/community/tutorials/how-to-use-ejs-to-template-your-node-application
