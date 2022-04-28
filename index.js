@@ -12,10 +12,22 @@ app.set('view engine', 'ejs');
 
 // index page
 app.get('/', async (req, res) => {
-    var rows = await mysql.conn.query("select * from events limit 10;");
-    console.log(rows);
+    var rows = await mysql.conn.query("select * from events;");
+
+    week = {};
+    
+    rows.forEach(row => {
+        if(!(row.start_republic_day in week))
+        {
+            week[row.start_republic_day] = [];
+        }
+        week[row.start_republic_day].push(row);
+    });
+
+    console.log(week);
+
     res.render('pages/index', {
-        events : rows
+        events : week
     });
 });
 
