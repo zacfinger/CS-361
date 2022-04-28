@@ -10,10 +10,209 @@
   height: 100%;">
 
 <main class="container-fluid" style="flex: 1 1 auto;padding-top:20px;">
-    <div id="week" class="mx-auto col-11">
-        <div style="border:0px; height:100%; overflow: auto;">
+
+
+  <!-- add event Modal -->
+<form class="modal fade" action="/add-event" method="post" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <input type="hidden" value="true" name="newevent" id="newevent">
+  <input type="hidden" value="week" name="view" id="view">
+  <input type="hidden" name="viewyear" value="230">
+  <input type="hidden" name="viewmonth" value="8">
+  <input type="hidden" name="viewday" value="8">
+  <div class="modal-dialog" role="document" style="max-width:50em;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Ajouter un évènement</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <!-- https://stackoverflow.com/questions/12201835/form-inline-inside-a-form-horizontal-in-twitter-bootstrap -->
+        <!-- Event name row -->
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-1">Quoi</div>
+          <div class="col-11"><input class="form-control" type="text" name="eventname" id="eventname" style="width:100%" /></div>
+        </div> <!-- /Event name row -->
+        <!-- Start time row -->
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-1">Début</div>
+          <div class="col-2">
+            <select class="custom-select" name="startday" id="startday" style="width:100%">
+              <option selected="true" disabled="disabled">Day</option>
+              <option value="1">01</option>
+              <option value="2">02</option>
+              <option value="3">03</option>
+              <option value="4">04</option>
+              <option value="5">05</option>
+              <option value="6">06</option>
+              <option value="7">07</option>
+              <option value="8">08</option>
+              <option value="9">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <!-- https://stackoverflow.com/questions/34825325/document-getelementbyidid-in-onchange-parameter/34825348#34825348 -->
+            <select class="custom-select" id="startmonth" name="startmonth" style="width:100%">
+              <option selected="true" disabled="disabled">Month</option>
+              <option value="1">Vendemiaire</option>
+              <option value="2">Brumaire</option>
+              <option value="3">Frimaire</option>
+              <option value="4">Nivose</option>
+              <option value="5">Pluviose</option>
+              <option value="6">Ventose</option>
+              <option value="7">Germinal</option>
+              <option value="8">Floreal</option>
+              <option value="9">Prairial</option>
+              <option value="10">Messidor</option>
+              <option value="11">Thermidor</option>
+              <option value="12">Fructidor</option>
+            </select>
+          </div>
+          <div class="col-2"><input class="form-control" type="number" step="1" name="startyear" id="startyear" style="width:100%" onchange="changeDays(document.getElementById('startmonth').value,this.value,'start');" /></div>
+          <div class="col-2">
+            <select class="custom-select" id="starthour" name="starthour" style="width:100%">
+              <!-- https://stackoverflow.com/questions/22033922/how-to-show-disable-html-select-option-in-by-default -->
+              <option selected="true" disabled="disabled">Heure</option>
+              <option value="0">0h</option>
+              <option value="1">1h</option>
+              <option value="2">2h</option>
+              <option value="3">3h</option>
+              <option value="4">4h</option>
+              <option value="5">5h</option>
+              <option value="6">6h</option>
+              <option value="7">7h</option>
+              <option value="8">8h</option>
+              <option value="9">9h</option>
+            </select>
+          </div>
+          <div class="col-2">
+            <select class="custom-select" id="startminute" name="startminute" style="width:100%">
+              
+            </select>
+          </div>
+        </div> <!-- /Event start time row -->
+        <!-- Event end time row -->
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-1">Fin</div>
+          <div class="col-2">
+            <select class="custom-select" id="endday" name="endday" style="width:100%">
+              <option selected="true" disabled="disabled">Day</option>
+              <option value="1">01</option>
+              <option value="2">02</option>
+              <option value="3">03</option>
+              <option value="4">04</option>
+              <option value="5">05</option>
+              <option value="6">06</option>
+              <option value="7">07</option>
+              <option value="8">08</option>
+              <option value="9">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <select class="custom-select" id="endmonth" name="endmonth" style="width:100%">
+              <option selected="true" disabled="disabled">Month</option>
+              <option value="1">Vendemiaire</option>
+              <option value="2">Brumaire</option>
+              <option value="3">Frimaire</option>
+              <option value="4">Nivose</option>
+              <option value="5">Pluviose</option>
+              <option value="6">Ventose</option>
+              <option value="7">Germinal</option>
+              <option value="8">Floreal</option>
+              <option value="9">Prairial</option>
+              <option value="10">Messidor</option>
+              <option value="11">Thermidor</option>
+              <option value="12">Fructidor</option>
+            </select>
+          </div>
+          <div class="col-2"><input class="form-control" type="number" step="1" name="endyear" id="endyear" style="width:100%"  /></div>
+          <div class="col-2">
+            <select class="custom-select" id="endhour" name="endhour" style="width:100%">
+              <option selected="true" disabled="disabled">Heure</option>
+              <option value="0">0h</option>
+              <option value="1">1h</option>
+              <option value="2">2h</option>
+              <option value="3">3h</option>
+              <option value="4">4h</option>
+              <option value="5">5h</option>
+              <option value="6">6h</option>
+              <option value="7">7h</option>
+              <option value="8">8h</option>
+              <option value="9">9h</option>
+            </select>
+          </div>
+          <div class="col-2">
+            <select class="custom-select" id="endminute" name="endminute" style="width:100%">
+
+            </select>
+          </div>
+        </div> <!-- /row -->
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-1">Où</div>
+          <div class="col-11"><input class="form-control" type="text" id="location" name="location" style="width:100%" /></div>
+        </div>
+        <div class="row">
+          <div class="col-2">La description</div>
+          <textarea class="col-9" id="description" name="description" rows="3" width="100%"></textarea>
+
+        </div>
+      </div> <!-- /modal-body -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</form><!-- /add event modal -->
+
+  <form id="week" class="mx-auto col-12" action="/" method="post">
+    <div style="border:0px; height:113vh; overflow: auto;">
   
       <span style="background-color:WhiteSmoke; display:block; height:100%; width:10%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
+
         <div class="weekly-col-label">h.mm</div>
         <div class="hour-container">
           <div class="hour">0.00</div>
@@ -32,9 +231,10 @@
       <% Object.keys(events).forEach(function(day) { %>
         
         <span style="background-color:WhiteSmoke; display:block; height:100%; width:18%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
-            <div class="weekly-col-label">
+          <div class="weekly-col-label">
                 <div>Floreal <%= day %></div>
             </div>
+            <a data-toggle="modal" data-target="#exampleModal" >
         <div class="week_day">
             <!-- https://stackoverflow.com/questions/3727045/set-variable-in-jinja -->
             
@@ -44,10 +244,32 @@
                         <div class="event_content"><%= event.title %></div>
                         </div>
         <% }); %>
-                </div>
+                </div></a>
                 </span>
       <% }); %>
-</div></div>
+</div></form>
+<script>
+  
+function populateMinutes()
+        {
+          htmlStr = "<option selected='true' disabled='disabled'>Minute</option>";
+
+          for(var x=0;x<100;x++){
+
+              htmlStr += "<option value='" + x + "'>";
+              if(x<10){
+                htmlStr += "0";
+              }
+              htmlStr += x + "</option>";
+          }
+
+          document.getElementById("startminute").innerHTML = htmlStr;
+          document.getElementById("endminute").innerHTML = htmlStr;
+        }
+
+populateMinutes();
+</script>
+
 </main>
 
 <footer>
