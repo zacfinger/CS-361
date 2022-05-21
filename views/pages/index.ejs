@@ -13,9 +13,15 @@
   <script>
   var text = '<%- JSON.stringify(events) %>'
   const myObj = JSON.parse(text);
-  console.log(myObj);
+  //console.log(myObj);
   </script>
 <% } %>
+
+<script>
+  var prev_week_text = '<%- JSON.stringify(prev_week) %>'
+  const prev_week = JSON.parse(prev_week_text);
+  console.log(prev_week);
+</script>
 
 <main class="container-fluid" style="flex: 1 1 auto;padding-top:20px;">
 
@@ -217,6 +223,15 @@
 </form><!-- /add event modal -->
 
   <form id="week" class="mx-auto col-12" action="/" method="post">
+
+    <div class="row">
+      <div class="col-3" style="text-align:left;">
+        <a href="/<%= prev_week.prev_year %>/<%= prev_week.prev_month %>/<%= prev_week.prev_day %>" class="btn btn-outline-dark btn-small">&#9664;</a>
+        <a href="/<%= next_week.next_year %>/<%= next_week.next_month %>/<%= next_week.next_day %>" class="btn btn-outline-dark btn-small">&#9654;</a>
+        <a href="/" class="btn btn-outline-primary">Aujourd'hui</a>
+      </div>
+  </div>
+
     <div style="border:0px; height:113vh; overflow: auto;">
   
       <span style="background-color:WhiteSmoke; display:block; height:100%; width:10%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
@@ -240,7 +255,7 @@
         
         <span style="background-color:WhiteSmoke; display:block; height:100%; width:18%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
           <div class="weekly-col-label">
-                <div>Floreal <%= day %></div>
+                <div><%= month_name %> <%= day %></div>
             </div>
             <a data-toggle="modal" data-target="#exampleModal" >
         <div class="week_day">

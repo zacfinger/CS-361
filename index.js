@@ -15,6 +15,23 @@ var jsonParser = bodyParser.json()
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+const month_enum = 
+{
+    1: "Vendémiaire",
+    2: "Brumaire",
+    3: "Frimaire",
+    4: "Nivôse",
+    5: "Pluviôse",
+    6: "Ventôse",
+    7: "Germinal",
+    8: "Floréal",
+    9: "Prairial",
+    10: "Messidor",
+    11: "Thermidor",
+    12: "Fructidor",
+    13: "Sansculottides"
+}
+
 // use res.render to load up an ejs view file
 
 // weekly view
@@ -24,6 +41,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     let year = Number(req.params.year);
     let month = Number(req.params.month);
     let day = Number(req.params.day);
+    let month_name = month_enum[month];
 
     // Build the weekly view
     // day represents in (Republican, not Gregorian) the first day to display in
@@ -37,6 +55,28 @@ app.get('/:year/:month/:day', async (req, res) => {
         day = 5 * Math.floor(day/5) + 1;
     }
 
+    // Determine parameters to display previous week
+    // Generally prev_day will be the first day minus 1, except on the first 
+    // week of the month.
+    let prev_day = day - 1;
+    let prev_month = month;
+    let prev_year = year;
+    if(prev_day < 1) {
+        prev_day = 30;
+        prev_month = prev_month - 1;
+    }
+    
+    // Determine parameters to display next week
+    // Generally next_day will be the first day plus 5, except on the last 
+    // week of the month.
+    let next_day = day + 5;
+    let next_month = month;
+    let next_year = year;
+    if(next_day > 30){
+        next_day = 1;
+        next_month = next_month + 1;
+    }
+    
     // send to view object with all events for a given week
     var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ?;", [year, month, day, day + 4]);
 
@@ -53,7 +93,10 @@ app.get('/:year/:month/:day', async (req, res) => {
     });
 
     res.render('pages/index', {
-        events : week
+        events      : week,
+        prev_week   : { "prev_day": prev_day, "prev_month": prev_month, "prev_year": prev_year },
+        next_week   : { "next_day": next_day, "next_month": next_month, "next_year": next_year },
+        month_name  : month_name
     });
 });
 
