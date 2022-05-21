@@ -20,37 +20,37 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 // weekly view
 app.get('/:year/:month/:day', async (req, res) => {
 
-    var year = Number(req.params.year);
-    var month = Number(req.params.month);
-    var day = Number(req.params.day);
-
-    console.log(day);
-
-    day += 1;
-    console.log(day);
-
-    var rows = await mysql.conn.query("select * from events;");
-
     // retrieve start date
-    // send to view object with all events for a given week
+    let year = Number(req.params.year);
+    let month = Number(req.params.month);
+    let day = Number(req.params.day);
 
-    week = {
-        6: [],
-        7: [],
-        8: [],
-        9: [],
-        10: []
-    };
+    // Build the weekly view
+    // day represents in (Republican, not Gregorian) the first day to display in
+    // the five-day "weekly" view
+    if(day % 5 == 0)
+    {
+        day = day - 4;
+    }
+    else 
+    {
+        day = 5 * Math.floor(day/5) + 1;
+    }
+
+    // send to view object with all events for a given week
+    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ?;", [year, month, day, day + 4]);
+
+    week = {};
+
+    for(var i = 0; i < 5; i++)
+    {
+        week[day + i] = [];
+    }
     
     rows.forEach(row => {
-        if(!(row.start_republic_day in week))
-        {
-            week[row.start_republic_day] = [];
-        }
+        
         week[row.start_republic_day].push(row);
     });
-
-    //console.log(week);
 
     res.render('pages/index', {
         events : week
@@ -60,10 +60,12 @@ app.get('/:year/:month/:day', async (req, res) => {
 // index page
 app.get('/', async (req, res) => {
     // test out rendering the page
-    var year = 230;
-    var month = 9;
-    var day = 1;
-    res.redirect('/' + 230 + '/' + month + '/' + day);
+    // replace with current date in next release
+    let year = 230;
+    let month = 9;
+    let day = 1;
+
+    res.redirect('/' + year + '/' + month + '/' + day);
 });
 
 // POST /add-event gets urlencoded bodies
