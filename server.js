@@ -20,8 +20,14 @@ const getResults = async (elementType, siteUrl) => {
     var sites = [];
     const $ = await fetchData(siteUrl);
     $('.' + elementType).each((index, element) => {
-        //sites.push($(element))
-		var e = $(element)[0];
+        
+        var e = $(element)[0];
+
+        e.children.forEach(child => {
+            if(child.type == "text"){
+                e.data = child.data;
+            }
+        });
 
         delete e.children;
         delete e.parent;
