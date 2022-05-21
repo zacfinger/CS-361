@@ -37,12 +37,19 @@ const getResults = async (elementType, siteUrl) => {
 };
 
 app.get('/api/scraper', async (req, res, next) => {
-	let elementType = req.query.elementType;
-	let siteURL = req.query.siteURL;
-	console.log(elementType);
-	console.log(siteURL);
-	let results = await getResults(elementType, siteURL)
-	res.json(results);
+
+    try {
+        let elementType = req.query.elementType;
+        let siteURL = req.query.siteURL;
+        console.log(elementType);
+        console.log(siteURL);
+        let results = await getResults(elementType, siteURL)
+        res.json(results);
+    } catch (error)
+    {
+        res.send(error)
+    }
+	
 });
 
 app.listen(app.get('port'), function(){

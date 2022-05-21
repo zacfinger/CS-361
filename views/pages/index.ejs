@@ -9,6 +9,14 @@
   flex-flow: column;
   height: 100%;">
 
+<% if (events) { %>
+  <script>
+  var text = '<%- JSON.stringify(events) %>'
+  const myObj = JSON.parse(text);
+  console.log(myObj);
+  </script>
+<% } %>
+
 <main class="container-fluid" style="flex: 1 1 auto;padding-top:20px;">
 
 

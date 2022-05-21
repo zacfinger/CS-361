@@ -75,6 +75,6 @@ app.post('/add-event', urlencodedParser, async (req, res) => {
     res.redirect('/');
 });
 
-app.listen(9000, () => {
-    console.log('app listening on port 9000');
+app.listen(4000, () => {
+    console.log('app listening on port 3000');
 });
