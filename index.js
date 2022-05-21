@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mysql = require('./dbcon.js'); // mysql object
 const bodyParser = require('body-parser');
+//const calendar = require('./calendar.js');  // get the calendar functions
 
 const app = new express();
 
@@ -16,9 +17,22 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 // use res.render to load up an ejs view file
 
-// index page
-app.get('/', async (req, res) => {
+// weekly view
+app.get('/:year/:month/:day', async (req, res) => {
+
+    var year = Number(req.params.year);
+    var month = Number(req.params.month);
+    var day = Number(req.params.day);
+
+    console.log(day);
+
+    day += 1;
+    console.log(day);
+
     var rows = await mysql.conn.query("select * from events;");
+
+    // retrieve start date
+    // send to view object with all events for a given week
 
     week = {
         6: [],
@@ -41,6 +55,15 @@ app.get('/', async (req, res) => {
     res.render('pages/index', {
         events : week
     });
+});
+
+// index page
+app.get('/', async (req, res) => {
+    // test out rendering the page
+    var year = 230;
+    var month = 9;
+    var day = 1;
+    res.redirect('/' + 230 + '/' + month + '/' + day);
 });
 
 // POST /add-event gets urlencoded bodies

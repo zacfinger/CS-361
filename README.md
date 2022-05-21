@@ -15,3 +15,5 @@ CREATE TABLE events (id int NOT NULL AUTO_INCREMENT, title varchar(63), owning_u
 * https://www.digitalocean.com/community/tutorials/how-to-use-ejs-to-template-your-node-application
 * https://stackoverflow.com/questions/31764552/ejs-how-to-iterate-object
 * https://www.codegrepper.com/code-examples/javascript/frameworks/react/node+js+foreach+object+key+value+ejs
+* https://stackoverflow.com/questions/11289793/accessing-ejs-variable-in-javascript-logic
+* 
