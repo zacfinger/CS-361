@@ -3,11 +3,13 @@ const path = require('path');
 const mysql = require('./dbcon.js'); // mysql object
 const bodyParser = require('body-parser');
 //const calendar = require('./calendar.js');  // get the calendar functions
+const fs = require('fs');
 
 const app = new express();
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
+app.set('port', 4000);
 
 // create application/json parser
 var jsonParser = bodyParser.json()
@@ -102,6 +104,16 @@ app.get('/:year/:month/:day', async (req, res) => {
 
 // index page
 app.get('/', async (req, res) => {
+
+    // Test to read file from Ross' project
+    fs.readFile('/home/zac/Developer/Project---Microservice/isLeapYearInput.txt', 'utf8', (err, data) => {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    console.log(data);
+    });
+
     // test out rendering the page
     // replace with current date in next release
     let year = 230;
@@ -143,6 +155,6 @@ app.post('/add-event', urlencodedParser, async (req, res) => {
     res.redirect('/');
 });
 
-app.listen(4000, () => {
-    console.log('app listening on port 3000');
+app.listen(app.get('port'), () => {
+    console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
