@@ -3,25 +3,12 @@
 <head>
   <%- include('../partials/head'); %>
 </head>
+
 <!-- https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space
     -->
     <body style="display: flex;
   flex-flow: column;
   height: 100%;">
-
-<% if (events) { %>
-  <script>
-  var text = '<%- JSON.stringify(events) %>'
-  const myObj = JSON.parse(text);
-  //console.log(myObj);
-  </script>
-<% } %>
-
-<script>
-  var prev_week_text = '<%- JSON.stringify(prev_week) %>'
-  const prev_week = JSON.parse(prev_week_text);
-  console.log(prev_week);
-</script>
 
 <main class="container-fluid" style="flex: 1 1 auto;padding-top:20px;">
 
@@ -253,7 +240,7 @@
       </span>
       <% Object.keys(events).forEach(function(day) { %>
         
-        <span style="background-color:WhiteSmoke; display:block; height:100%; width:18%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
+        <span class="week_day_container">
           <div class="weekly-col-label">
                 <div><%= month_name %> <%= day %></div>
             </div>
@@ -292,6 +279,20 @@ function populateMinutes()
 
 populateMinutes();
 </script>
+
+<% if (events) { %>
+<script>
+    var text = '<%- JSON.stringify(events) %>'
+    const myObj = JSON.parse(text);
+    var spanWidthPct = 90 / Object.keys(myObj).length;
+    console.log(spanWidthPct);
+    const collection = document.querySelectorAll('.week_day_container');
+
+    collection.forEach(box => {
+      box.style.width = spanWidthPct.toString() + '%';
+    });
+</script>
+<% } %>
 
 </main>
 
