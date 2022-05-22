@@ -45,6 +45,8 @@ app.get('/:year/:month/:day', async (req, res) => {
     let day = Number(req.params.day);
     let month_name = month_enum[month];
 
+    let isLeapYear = 0;
+
     // Build the weekly view
     // day represents in (Republican, not Gregorian) the first day to display in
     // the five-day "weekly" view
@@ -63,28 +65,51 @@ app.get('/:year/:month/:day', async (req, res) => {
     let prev_day = day - 1;
     let prev_month = month;
     let prev_year = year;
-    if(prev_day < 1) {
-        prev_day = 30;
-        prev_month = prev_month - 1;
-    }
-    
+
     // Determine parameters to display next week
     // Generally next_day will be the first day plus 5, except on the last 
     // week of the month.
     let next_day = day + 5;
     let next_month = month;
     let next_year = year;
-    if(next_day > 30){
-        next_day = 1;
-        next_month = next_month + 1;
+
+    // Check for end of year boundary scenarios
+    if(month == 1 && day == 1)
+    {
+        prev_month = 13;
+        prev_day = 1;
+        prev_year = year - 1;
     }
+    else if (month == 13)
+    {
+        prev_month = 12;
+        prev_day = 30;
+        
+        next_month = 1;
+        next_day = 1;
+        next_year = year + 1;
+    }
+    // handle generic case, middle of year and no leap years
+    else
+    {
+        if(prev_day < 1) {
+            prev_day = 30;
+            prev_month = prev_month - 1;
+        }
+    
+        if(next_day > 30){
+            next_day = 1;
+            next_month = next_month + 1;
+        }
+    }
+    
     
     // send to view object with all events for a given week
     var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ?;", [year, month, day, day + 4]);
 
     week = {};
 
-    for(var i = 0; i < 5; i++)
+    for(var i = 0; i < (5 + isLeapYear); i++)
     {
         week[day + i] = [];
     }
