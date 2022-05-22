@@ -45,7 +45,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     let day = Number(req.params.day);
     let month_name = month_enum[month];
 
-    let isLeapYear = 0;
+    let isLeapYear = (year % 4 == 0 && month == 13) ? 1 : 0;
 
     // Build the weekly view
     // day represents in (Republican, not Gregorian) the first day to display in
