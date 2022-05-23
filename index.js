@@ -105,7 +105,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     
     
     // send to view object with all events for a given week
-    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ?;", [year, month, day, day + 4]);
+    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ? order by start_republic_hour, start_republic_minute;", [year, month, day, day + 4]);
 
     week = {};
 

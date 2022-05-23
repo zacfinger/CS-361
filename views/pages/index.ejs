@@ -243,54 +243,121 @@
         <span class="week_day_container">
           <div class="weekly-col-label">
                 <div><%= month_name %> <%= day %></div>
-            </div>
-            <a data-toggle="modal" data-target="#exampleModal" >
-        <div class="week_day">
-            <!-- https://stackoverflow.com/questions/3727045/set-variable-in-jinja -->
-            
-            <% events[day].forEach(function(event) { %>
-                    <div class="event_object">
-                        <div class="event_header"><%= event.start_republic_hour %>.<%= event.start_republic_minute %></div>
-                        <div class="event_content"><%= event.title %></div>
-                        </div>
-        <% }); %>
-                </div></a>
-                </span>
+          </div>
+          <a data-toggle="modal" data-target="#exampleModal" >
+              <div id="day_<%= day %>" class="week_day">
+
+              </div>
+          </a>
+        </span>
       <% }); %>
 </div></form>
 <script>
   
 function populateMinutes()
-        {
-          htmlStr = "<option selected='true' disabled='disabled'>Minute</option>";
+{
+  htmlStr = "<option selected='true' disabled='disabled'>Minute</option>";
 
-          for(var x=0;x<100;x++){
+  for(var x=0;x<100;x++){
 
-              htmlStr += "<option value='" + x + "'>";
-              if(x<10){
-                htmlStr += "0";
-              }
-              htmlStr += x + "</option>";
-          }
+      htmlStr += "<option value='" + x + "'>";
+      if(x<10){
+        htmlStr += "0";
+      }
+      htmlStr += x + "</option>";
+  }
 
-          document.getElementById("startminute").innerHTML = htmlStr;
-          document.getElementById("endminute").innerHTML = htmlStr;
-        }
+  document.getElementById("startminute").innerHTML = htmlStr;
+  document.getElementById("endminute").innerHTML = htmlStr;
+}
 
 populateMinutes();
 </script>
 
 <% if (events) { %>
 <script>
-    var text = '<%- JSON.stringify(events) %>'
-    const myObj = JSON.parse(text);
-    var spanWidthPct = 90 / Object.keys(myObj).length;
-    console.log(spanWidthPct);
-    const collection = document.querySelectorAll('.week_day_container');
 
-    collection.forEach(box => {
-      box.style.width = spanWidthPct.toString() + '%';
-    });
+  // Get all events from Node/express/ejs
+  var text = '<%- JSON.stringify(events) %>'
+  const myObj = JSON.parse(text);
+  console.log(myObj);
+  
+  // Calculate width of each span containing the day elements
+  // Will be 5 days most weeks, except month 13 on leap years when there are 6
+  var spanWidthPct = 90 / Object.keys(myObj).length;
+  const collection = document.querySelectorAll('.week_day_container');
+
+  // Apply width
+  collection.forEach(box => {
+    box.style.width = spanWidthPct.toString() + '%';
+  });
+
+  // Dynamically place elements on page one day at a time
+  for (const [key, value] of Object.entries(myObj)) 
+  {
+    // Get the day containing the span element
+    var span = document.getElementById(`day_${key}`);
+
+    // Get all events for the day
+    var events = myObj[key];
+
+    var totalTime = 0;
+
+    for(var i = 0; i < events.length; i++)
+    {
+      var event = events[i];
+      var startHr = event["start_republic_hour"] * 100;
+      startHr += event["start_republic_minute"];
+      var endHr = event["end_republic_hour"] * 100;
+      endHr += event["end_republic_minute"];
+
+      var diffTime = startHr - totalTime;
+      totalTime = endHr - startHr;
+
+      var emptyDiv = document.createElement("div");
+      divHeight = diffTime / 10;
+      emptyDiv.style.height = "" + divHeight.toString() + "%";
+      span.appendChild(emptyDiv);
+
+      /* Event div
+      <div class="event_object">
+                      <div class="event_header"> event.start_republic_hour . event.start_republic_minute </div>
+                      <div class="event_content"> event.title </div>
+                      </div>
+      */
+      var eventDiv = document.createElement("div");
+      eventDiv.classList.add("event_object");
+      
+      // Less than 5% of the height looks pretty weird
+      if (totalTime < 50) 
+      { 
+        totalTime = 50;
+        endHr = startHr + 50;
+      }
+
+      divHeight = (totalTime) / 10;
+      eventDiv.style.height = "" + divHeight.toString() + "%";
+
+      var eventHeader = document.createElement("div");
+      eventHeader.classList.add("event_header")
+      var minute = event["start_republic_minute"];
+      if (minute < 10) minute = "0" + minute.toString();
+      eventHeader.innerHTML = event["start_republic_hour"] + "." + minute.toString();
+
+      eventDiv.appendChild(eventHeader);
+      
+      var eventContent = document.createElement("div");
+      eventContent.classList.add("event_content");
+      eventContent.innerHTML = event["title"];
+
+      eventDiv.appendChild(eventContent);
+
+      span.appendChild(eventDiv);
+
+      totalTime = endHr;
+    }
+  }
+
 </script>
 <% } %>
 
