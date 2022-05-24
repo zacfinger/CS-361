@@ -213,9 +213,9 @@
 
     <div class="row">
       <div class="col-3" style="text-align:left;">
-        <a href="/<%= prev_week.prev_year %>/<%= prev_week.prev_month %>/<%= prev_week.prev_day %>" class="btn btn-outline-dark btn-small">&#9664;</a>
-        <a href="/<%= next_week.next_year %>/<%= next_week.next_month %>/<%= next_week.next_day %>" class="btn btn-outline-dark btn-small">&#9654;</a>
-        <a href="/" class="btn btn-outline-primary">Aujourd'hui</a>
+        <a onclick="showSpinner();" href="/<%= prev_week.prev_year %>/<%= prev_week.prev_month %>/<%= prev_week.prev_day %>" class="btn btn-outline-dark btn-small">&#9664;</a>
+        <a onclick="showSpinner();" href="/<%= next_week.next_year %>/<%= next_week.next_month %>/<%= next_week.next_day %>" class="btn btn-outline-dark btn-small">&#9654;</a>
+        <a onclick="showSpinner();" href="/" class="btn btn-outline-primary">Aujourd'hui</a>
       </div>
   </div>
 
@@ -272,6 +272,18 @@ function populateMinutes()
 }
 
 populateMinutes();
+
+function showSpinner()
+{
+  var weekDiv = document.getElementById("week");
+  weekDiv.innerHTML = "";
+
+  var spinner = document.createElement("div");
+  spinner.classList.add("loader");
+
+  weekDiv.appendChild(spinner);
+
+}
 </script>
 
 <% if (events) { %>

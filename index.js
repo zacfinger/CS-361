@@ -3,7 +3,7 @@ const path = require('path');
 const mysql = require('./dbcon.js'); // mysql object
 const bodyParser = require('body-parser');
 //const calendar = require('./calendar.js');  // get the calendar functions
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const app = new express();
 
@@ -45,9 +45,34 @@ app.get('/:year/:month/:day', async (req, res) => {
     let day = Number(req.params.day);
     let month_name = month_enum[month];
 
-    // Fix this
-    //let isLeapYear = (year % 4 == 0 && month == 13) ? 1 : 0;
     let isLeapYear = 0;
+
+    // Calculate leap year
+    if(month == 13)
+    {
+        var text = "wait";
+
+        try {
+
+            // Write year to Ross' input file
+            await fs.writeFile('/home/zac/Developer/Project---Microservice/isLeapYearInput.txt', year.toString());
+            console.log("wrote file");
+        }
+        catch(err){
+            console.error("something broke");
+        }
+        
+        do 
+        {
+            console.log("Checking the file ...");
+            text = await fs.readFile('/home/zac/Developer/Project---Microservice/isLeapYearOutput.txt', "binary");
+            text = text.replace(/\s+/g, ' ').trim();
+
+        } while (text == "wait");
+
+        // Converts value in Ross' file
+        isLeapYear = (text.toLowerCase() === 'true') ? 1 : 0
+    }
 
     // Build the weekly view
     // day represents in (Republican, not Gregorian) the first day to display in
