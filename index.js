@@ -45,7 +45,9 @@ app.get('/:year/:month/:day', async (req, res) => {
     let day = Number(req.params.day);
     let month_name = month_enum[month];
 
-    let isLeapYear = (year % 4 == 0 && month == 13) ? 1 : 0;
+    // Fix this
+    //let isLeapYear = (year % 4 == 0 && month == 13) ? 1 : 0;
+    let isLeapYear = 0;
 
     // Build the weekly view
     // day represents in (Republican, not Gregorian) the first day to display in
@@ -62,7 +64,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     // Determine parameters to display previous week
     // Generally prev_day will be the first day minus 1, except on the first 
     // week of the month.
-    let prev_day = day - 1;
+    let prev_day = day - 5;
     let prev_month = month;
     let prev_year = year;
 
@@ -74,7 +76,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     let next_year = year;
 
     // Check for end of year boundary scenarios
-    if(month == 1 && day == 1)
+    if(month == 1 && day <= 5)
     {
         prev_month = 13;
         prev_day = 1;
@@ -83,7 +85,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     else if (month == 13)
     {
         prev_month = 12;
-        prev_day = 30;
+        prev_day = 26;
         
         next_month = 1;
         next_day = 1;
@@ -93,7 +95,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     else
     {
         if(prev_day < 1) {
-            prev_day = 30;
+            prev_day = 26;
             prev_month = prev_month - 1;
         }
     
@@ -105,7 +107,7 @@ app.get('/:year/:month/:day', async (req, res) => {
     
     
     // send to view object with all events for a given week
-    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ? order by start_republic_hour, start_republic_minute;", [year, month, day, day + 4]);
+    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ? order by start_republic_day, start_republic_hour, start_republic_minute;", [year, month, day, day + 4 + isLeapYear]);
 
     week = {};
 
@@ -129,15 +131,6 @@ app.get('/:year/:month/:day', async (req, res) => {
 
 // index page
 app.get('/', async (req, res) => {
-
-    // Test to read file from Ross' project
-    fs.readFile('/home/zac/Developer/Project---Microservice/isLeapYearInput.txt', 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    console.log(data);
-    });
 
     // test out rendering the page
     // replace with current date in next release
