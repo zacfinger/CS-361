@@ -31,16 +31,7 @@ const month_enum =
     13: "Sansculottides"
 }
 
-// use res.render to load up an ejs view file
-
-// weekly view
-app.get('/:year/:month/:day', async (req, res) => {
-
-    // retrieve start date
-    let year = Number(req.params.year);
-    let month = Number(req.params.month);
-    let day = Number(req.params.day);
-    let month_name = month_enum[month];
+async function getEvents (year, month, day) {
 
     let isLeapYear = 0;
 
@@ -82,6 +73,53 @@ app.get('/:year/:month/:day', async (req, res) => {
     {
         day = 5 * Math.floor(day/5) + 1;
     }
+
+    // send to view object with all events for a given week
+    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ? order by start_republic_day, start_republic_hour, start_republic_minute;", [year, month, day, day + 4 + isLeapYear]);
+
+    week = {};
+
+    for(var i = 0; i < (5 + isLeapYear); i++)
+    {
+        week[day + i] = [];
+    }
+    
+    rows.forEach(row => {
+        
+        week[row.start_republic_day].push(row);
+    });
+
+    return week;
+}
+
+app.get('/get-events/:year/:month/:day', async (req, res) => {
+
+    // retrieve start date
+    let year = Number(req.params.year);
+    let month = Number(req.params.month);
+    let day = Number(req.params.day);
+
+    console.log(year);
+
+    var events = await getEvents(year, month, day);
+
+    console.log(events);
+
+    res.send(events);
+});
+
+// use res.render to load up an ejs view file
+
+// weekly view
+app.get('/:year/:month/:day', async (req, res) => {
+
+    // retrieve start date
+    let year = Number(req.params.year);
+    let month = Number(req.params.month);
+    let day = Number(req.params.day);
+    let month_name = month_enum[month];
+
+    var events = await getEvents(year, month, day);
 
     // Determine parameters to display previous week
     // Generally prev_day will be the first day minus 1, except on the first 
@@ -126,25 +164,9 @@ app.get('/:year/:month/:day', async (req, res) => {
             next_month = next_month + 1;
         }
     }
-    
-    
-    // send to view object with all events for a given week
-    var rows = await mysql.conn.query("select * from events where start_republic_year = ? and start_republic_month = ? and start_republic_day >= ? and start_republic_day <= ? order by start_republic_day, start_republic_hour, start_republic_minute;", [year, month, day, day + 4 + isLeapYear]);
-
-    week = {};
-
-    for(var i = 0; i < (5 + isLeapYear); i++)
-    {
-        week[day + i] = [];
-    }
-    
-    rows.forEach(row => {
-        
-        week[row.start_republic_day].push(row);
-    });
 
     res.render('pages/index', {
-        events      : week,
+        events      : events,
         prev_week   : { "prev_day": prev_day, "prev_month": prev_month, "prev_year": prev_year },
         next_week   : { "next_day": next_day, "next_month": next_month, "next_year": next_year },
         month_name  : month_name
