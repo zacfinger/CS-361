@@ -14,12 +14,7 @@
 
 
   <!-- add event Modal -->
-<form class="modal fade" action="/add-event" method="post" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <input type="hidden" value="true" name="newevent" id="newevent">
-  <input type="hidden" value="week" name="view" id="view">
-  <input type="hidden" name="viewyear" value="230">
-  <input type="hidden" name="viewmonth" value="8">
-  <input type="hidden" name="viewday" value="8">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" style="max-width:50em;">
     <div class="modal-content">
       <div class="modal-header">
@@ -203,11 +198,11 @@
       </div> <!-- /modal-body -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-primary" onclick="createCalendarEvent()">Guardar</button>
       </div>
     </div>
   </div>
-</form><!-- /add event modal -->
+</div><!-- /add event modal -->
 
   <form id="week" class="mx-auto col-12" action="/" method="post">
 
@@ -374,18 +369,18 @@ function createCalendarEvent() {
   
   let data = {
     newevent    :   true,
-    eventname   :   "Lunch with Brendan",
-    startday    :   15,
-    startmonth  :   9,
-    startyear   :   230,
-    starthour   :   5,
-    startminute :   0,
-    endday      :   15,
-    endmonth    :   9,
-    endyear     :   230,
-    endhour     :   5,
-    endminute   :   41,
-    description :   "test"
+    eventname   :   document.getElementById("eventname").value,
+    startday    :   document.getElementById("startday").value,
+    startmonth  :   document.getElementById("startmonth").value,
+    startyear   :   document.getElementById("startyear").value,
+    starthour   :   document.getElementById("starthour").value,
+    startminute :   document.getElementById("startminute").value,
+    endday      :   document.getElementById("endday").value,
+    endmonth    :   document.getElementById("endmonth").value,
+    endyear     :   document.getElementById("endyear").value,
+    endhour     :   document.getElementById("endhour").value,
+    endminute   :   document.getElementById("endminute").value,
+    description :   document.getElementById("description").value
   };
 
   // Ref: https://stackoverflow.com/questions/6396101/pure-javascript-send-post-data-without-a-form
@@ -395,6 +390,7 @@ function createCalendarEvent() {
   body: JSON.stringify(data)
   }).then(res => {
     console.log("Request complete! response:", res.body);
+    $("#exampleModal").modal('hide');
   });
 
 
