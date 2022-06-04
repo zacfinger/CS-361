@@ -15,6 +15,7 @@
 
   <!-- add event Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <input type="hidden" id="event_id">
   <div class="modal-dialog" role="document" style="max-width:50em;">
     <div class="modal-content">
       <div class="modal-header">
@@ -86,7 +87,7 @@
               <option value="12">Fructidor</option>
             </select>
           </div>
-          <div class="col-2"><input class="form-control" type="number" step="1" name="startyear" id="startyear" style="width:100%" onchange="changeDays(document.getElementById('startmonth').value,this.value,'start');" /></div>
+          <div class="col-2"><input class="form-control" type="number" step="1" name="startyear" id="startyear" style="width:100%" /></div>
           <div class="col-2">
             <select class="custom-select" id="starthour" name="starthour" style="width:100%">
               <!-- https://stackoverflow.com/questions/22033922/how-to-show-disable-html-select-option-in-by-default -->
@@ -239,15 +240,15 @@
           <div class="weekly-col-label">
                 <div><%= month_name %> <%= day %></div>
           </div>
-          <a data-toggle="modal" data-target="#exampleModal" >
-              <div id="day_<%= day %>" class="week_day">
+          <div id="day_<%= day %>" class="week_day">
 
-              </div>
-          </a>
+          </div>
         </span>
       <% }); %>
 </div></form>
 <script>
+
+var newevent = false;
   
 function populateMinutes()
 {
@@ -324,6 +325,9 @@ function showSpinner()
       var emptyDiv = document.createElement("div");
       divHeight = diffTime / 10;
       emptyDiv.style.height = "" + divHeight.toString() + "%";
+
+      emptyDiv.setAttribute("onclick", "createNewEvent()");
+
       span.appendChild(emptyDiv);
 
       /* Event div
@@ -359,6 +363,8 @@ function showSpinner()
 
       eventDiv.appendChild(eventContent);
 
+      eventDiv.setAttribute("onclick", "getEvent(" + key + "," + i + ")");
+
       span.appendChild(eventDiv);
 
       totalTime = endHr;
@@ -368,7 +374,7 @@ function showSpinner()
 function createCalendarEvent() {
   
   let data = {
-    newevent    :   true,
+    event_id    :   document.getElementById("event_id").value,
     eventname   :   document.getElementById("eventname").value,
     startday    :   document.getElementById("startday").value,
     startmonth  :   document.getElementById("startmonth").value,
@@ -383,17 +389,79 @@ function createCalendarEvent() {
     description :   document.getElementById("description").value
   };
 
-  // Ref: https://stackoverflow.com/questions/6396101/pure-javascript-send-post-data-without-a-form
-  fetch("/add-event", {
-  method: "POST",
-  headers: {'Content-Type': 'application/json'}, 
-  body: JSON.stringify(data)
-  }).then(res => {
-    console.log("Request complete! response:", res.body);
-    $("#exampleModal").modal('hide');
-  });
+  if(newevent)
+  {
+    console.log("create event");
+    // Ref: https://stackoverflow.com/questions/6396101/pure-javascript-send-post-data-without-a-form
+    fetch("/add-event", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+    }).then(res => {
+      console.log("Request complete! response:", res.body);
+      $("#exampleModal").modal('hide');
+      //refreshView();
+    });
+
+  }
+  else 
+  {
+    // Ref: https://stackoverflow.com/questions/6396101/pure-javascript-send-post-data-without-a-form
+    fetch("/update-event/", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+    }).then(res => {
+      console.log("Request complete! response:", res.body);
+      $("#exampleModal").modal('hide');
+      //refreshView();
+    });
+  }
 
 
+}
+
+function getEvent(day, index)
+{
+  var myEvent = myObj[day][index];
+
+  newevent = false;
+
+  document.getElementById("event_id").value = myEvent.id;
+  document.getElementById("eventname").value = myEvent.title;
+  document.getElementById("startday").value = myEvent.start_republic_day;
+  document.getElementById("startmonth").value = myEvent.start_republic_month;
+  document.getElementById("startyear").value = myEvent.start_republic_year;
+  document.getElementById("starthour").value = myEvent.start_republic_hour;
+  document.getElementById("startminute").value = myEvent.start_republic_minute;
+  document.getElementById("endday").value = myEvent.end_republic_day;
+  document.getElementById("endmonth").value = myEvent.end_republic_month;
+  document.getElementById("endyear").value = myEvent.end_republic_year;
+  document.getElementById("endhour").value = myEvent.end_republic_hour;
+  document.getElementById("endminute").value = myEvent.end_republic_minute;
+  document.getElementById("description").value = myEvent.description;
+
+  $("#exampleModal").modal('show');
+}
+
+function createNewEvent()
+{
+  newevent = true;
+
+  document.getElementById("eventname").value = "";
+  document.getElementById("startday").value = "";
+  document.getElementById("startmonth").value = "";
+  document.getElementById("startyear").value = "";
+  document.getElementById("starthour").value = "";
+  document.getElementById("startminute").value = "";
+  document.getElementById("endday").value = "";
+  document.getElementById("endmonth").value = "";
+  document.getElementById("endyear").value = "";
+  document.getElementById("endhour").value = "";
+  document.getElementById("endminute").value = "";
+  document.getElementById("description").value = "";
+
+  $("#exampleModal").modal('show');
 }
 
 </script>

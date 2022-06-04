@@ -158,7 +158,7 @@ app.get('/', async (req, res) => {
     // replace with current date in next release
     let year = 230;
     let month = 9;
-    let day = 1;
+    let day = 10;
 
     res.redirect('/' + year + '/' + month + '/' + day);
 });
@@ -180,7 +180,7 @@ app.post('/add-event', async (req, res) => {
     // endhour      : int
     // description  : string
 
-    console.log(req.body.starthour);
+    console.log(req.body);
 
     // get all start values for event
     var startday = req.body.startday;
@@ -207,9 +207,44 @@ app.post('/add-event', async (req, res) => {
 
     let result = await mysql.conn.query(insertStmt, [title, startyear, startmonth, startday, starthour, startminute, endyear, endmonth, endday, endhour, endminute, description]);
 
-    res.send({
-        'status': "OK"
-      });
+    res.send(
+        { "result": result }
+    );
+});
+
+app.post('/update-event/', async (req, res) => {
+    
+    console.log(req.body);
+    var event_id = req.body.event_id;
+
+    // get all start values for event
+    var startday = req.body.startday;
+    var startmonth = req.body.startmonth;
+    var startyear = req.body.startyear;
+
+    var starthour = req.body.starthour;
+    var startminute = req.body.startminute;
+
+    // get all end values for event
+    var endday = req.body.endday;
+    var endmonth = req.body.endmonth;
+    var endyear = req.body.endyear;
+
+    var endhour = req.body.endhour;
+    var endminute = req.body.endminute;
+
+    var title = req.body.eventname;
+    var description = req.body.description;
+
+    let insertStmt = 'update events set title = ?, start_republic_year = ?, start_republic_month = ?, start_republic_day = ?, start_republic_hour = ?, ';
+    insertStmt += 'start_republic_minute = ?, end_republic_year = ?, end_republic_month = ?, end_republic_day = ?, end_republic_hour = ?, end_republic_minute = ?, description = ? ';
+    insertStmt += 'where id = ?'
+
+    let result = await mysql.conn.query(insertStmt, [title, startyear, startmonth, startday, starthour, startminute, endyear, endmonth, endday, endhour, endminute, description, event_id]);
+
+    res.send(
+        { "result": result }
+    );
 });
 
 app.listen(app.get('port'), () => {
