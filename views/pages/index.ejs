@@ -370,6 +370,36 @@ function showSpinner()
     }
   }
 
+function createCalendarEvent() {
+  
+  let data = {
+    newevent    :   true,
+    eventname   :   "Lunch with Brendan",
+    startday    :   15,
+    startmonth  :   9,
+    startyear   :   230,
+    starthour   :   5,
+    startminute :   0,
+    endday      :   15,
+    endmonth    :   9,
+    endyear     :   230,
+    endhour     :   5,
+    endminute   :   41,
+    description :   "test"
+  };
+
+  // Ref: https://stackoverflow.com/questions/6396101/pure-javascript-send-post-data-without-a-form
+  fetch("/add-event", {
+  method: "POST",
+  headers: {'Content-Type': 'application/json'}, 
+  body: JSON.stringify(data)
+  }).then(res => {
+    console.log("Request complete! response:", res.body);
+  });
+
+
+}
+
 </script>
 <% } %>
 

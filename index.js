@@ -11,11 +11,8 @@ const app = new express();
 app.set('view engine', 'ejs');
 app.set('port', 4000);
 
-// create application/json parser
-var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const month_enum = 
 {
@@ -166,8 +163,23 @@ app.get('/', async (req, res) => {
     res.redirect('/' + year + '/' + month + '/' + day);
 });
 
-// POST /add-event gets urlencoded bodies
-app.post('/add-event', urlencodedParser, async (req, res) => {
+// POST /add-event retrieves POST request
+app.post('/add-event', async (req, res) => {
+    
+    // newevent     : boolean
+    // eventname    : string
+    // startday     : int
+    // startmonth   : int
+    // startyear    : int
+    // starthour    : int
+    // startminute  : int
+    // endday       : int
+    // endmonth     : int
+    // endyear      : int
+    // endminute    : int
+    // endhour      : int
+    // description  : string
+
     console.log(req.body.starthour);
 
     // get all start values for event
@@ -195,7 +207,9 @@ app.post('/add-event', urlencodedParser, async (req, res) => {
 
     let result = await mysql.conn.query(insertStmt, [title, startyear, startmonth, startday, starthour, startminute, endyear, endmonth, endday, endhour, endminute, description]);
 
-    res.redirect('/');
+    res.send({
+        'status': "OK"
+      });
 });
 
 app.listen(app.get('port'), () => {
