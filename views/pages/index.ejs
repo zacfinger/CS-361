@@ -215,7 +215,7 @@
       </div>
   </div>
 
-    <div style="border:0px; height:113vh; overflow: auto;">
+    <div id="week-container" style="border:0px; height:113vh; overflow: auto;">
   
       <span style="background-color:WhiteSmoke; display:block; height:100%; width:10%; float:left;box-shadow:inset 0px 0px 0px 1px LightGray;">
 
@@ -234,21 +234,15 @@
         </div>
   
       </span>
-      <% Object.keys(events).forEach(function(day) { %>
-        
-        <span class="week_day_container">
-          <div class="weekly-col-label">
-                <div><%= month_name %> <%= day %></div>
-          </div>
-          <div id="day_<%= day %>" class="week_day">
-
-          </div>
-        </span>
-      <% }); %>
+      <!-- days of week will populate here -->
 </div></form>
 <script>
 
 var newevent = false;
+
+const currDay = Number('<%- curr_day %>');
+const currMonth = Number('<%- curr_month %>');
+const currYear = Number('<%- curr_year %>');
   
 function populateMinutes()
 {
@@ -267,17 +261,37 @@ function populateMinutes()
   document.getElementById("endminute").innerHTML = htmlStr;
 }
 
+function clearAllExistingWeekDays()
+{
+  var collection = document.querySelectorAll('.week_day_container');
+
+  collection.forEach(box => {
+    box.parentNode.removeChild(box);
+  })
+}
+
 populateMinutes();
 
 function showSpinner()
 {
-  var weekDiv = document.getElementById("week");
-  weekDiv.innerHTML = "";
+  clearAllExistingWeekDays();
+
+  var weekDiv = document.getElementById("week-container");
+
+  var spinnerContainer = document.createElement("div");
+  var spinnerHeader = document.createElement("div");
+  spinnerContainer.classList.add("week_day_container");
+  spinnerHeader.classList.add("weekly-col-label");
+  spinnerContainer.style.width = "90%";
+
+  spinnerContainer.appendChild(spinnerHeader);
 
   var spinner = document.createElement("div");
   spinner.classList.add("loader");
 
-  weekDiv.appendChild(spinner);
+  spinnerContainer.appendChild(spinner);
+
+  weekDiv.appendChild(spinnerContainer);
 
 }
 </script>
@@ -285,26 +299,34 @@ function showSpinner()
 <% if (events) { %>
 <script>
 
-  // Get all events from Node/express/ejs
-  var text = '<%- JSON.stringify(events) %>'
-  var myObj = JSON.parse(text);
-  console.log(myObj);
-  
+// Get all events from Node/express/ejs
+var text = '<%- JSON.stringify(events) %>'
+var myObj = JSON.parse(text);
+console.log(myObj);
+
+function populateView()
+{
+  clearAllExistingWeekDays();
+
+  var weekDiv = document.getElementById("week-container");
+
   // Calculate width of each span containing the day elements
   // Will be 5 days most weeks, except month 13 on leap years when there are 6
   var spanWidthPct = 90 / Object.keys(myObj).length;
-  const collection = document.querySelectorAll('.week_day_container');
-
-  // Apply width
-  collection.forEach(box => {
-    box.style.width = spanWidthPct.toString() + '%';
-  });
 
   // Dynamically place elements on page one day at a time
-  for (const [key, value] of Object.entries(myObj)) 
-  {
-    // Get the day containing the span element
-    var span = document.getElementById(`day_${key}`);
+  for (const [key, value] of Object.entries(myObj)) {
+    var span = document.createElement("span");
+
+    // Apply width
+    span.style.width = spanWidthPct.toString() + "%";
+    span.classList.add("week_day_container");
+
+    var dayHeader = document.createElement("div");
+    dayHeader.classList.add("weekly-col-label");
+    dayHeader.innerHTML = '<%- month_name %>' + ' ' + key.toString();
+
+    span.appendChild(dayHeader);
 
     // Get all events for the day
     var events = myObj[key];
@@ -369,11 +391,23 @@ function showSpinner()
 
       totalTime = endHr;
     }
+
+    weekDiv.appendChild(span);
   }
+}
 
 function refreshEvents()
 {
-
+  showSpinner();
+  
+  // refresh events object via API call
+  fetch('/get-events/' + currYear + "/" + currMonth + "/" + currDay)
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+    myObj = data;
+    populateView();
+  });
 }
 
 function createCalendarEvent() {
@@ -405,7 +439,7 @@ function createCalendarEvent() {
     }).then(res => {
       console.log("Request complete! response:", res.body);
       $("#exampleModal").modal('hide');
-      //refreshView();
+      refreshEvents();
     });
 
   }
@@ -419,7 +453,7 @@ function createCalendarEvent() {
     }).then(res => {
       console.log("Request complete! response:", res.body);
       $("#exampleModal").modal('hide');
-      //refreshView();
+      refreshEvents();
     });
   }
 
@@ -468,6 +502,8 @@ function createNewEvent()
 
   $("#exampleModal").modal('show');
 }
+
+populateView();
 
 </script>
 <% } %>

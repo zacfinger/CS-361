@@ -169,6 +169,9 @@ app.get('/:year/:month/:day', async (req, res) => {
         events      : events,
         prev_week   : { "prev_day": prev_day, "prev_month": prev_month, "prev_year": prev_year },
         next_week   : { "next_day": next_day, "next_month": next_month, "next_year": next_year },
+        curr_day    : day,
+        curr_month  : month,
+        curr_year   : year,
         month_name  : month_name
     });
 });
@@ -180,7 +183,7 @@ app.get('/', async (req, res) => {
     // replace with current date in next release
     let year = 230;
     let month = 9;
-    let day = 10;
+    let day = 16;
 
     res.redirect('/' + year + '/' + month + '/' + day);
 });
